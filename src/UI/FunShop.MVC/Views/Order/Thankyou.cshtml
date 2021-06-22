@@ -1,0 +1,19 @@
+﻿@model FunShop.MVC.Models.ThankyouVM
+
+<div class="container p-3">
+   
+    <div class=" p-2">
+        @if (Model.Result)
+        {
+            <div class="alert alert-success">
+                thank you for your shopping code for more @Model.BankInfo
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger text-center">
+                sorry try again later
+            </div>
+        }
+    </div>
+</div>

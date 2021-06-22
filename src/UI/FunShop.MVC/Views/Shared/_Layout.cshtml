@@ -1,0 +1,153 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+            integrity="sha512-RXf+QSDCUQs5uwRKaDoXt55jygZZm2V++WUZduaU/Ui/9EGp3f/2KZVahFZBKGH0s774sd3HmrhUy+SgOFQLVQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>@ViewData["Title"] - FunShop.MVC</title>
+</head>
+<body class="bg-white">
+ 
+        <nav class="navbar navbar-expand-lg  navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand text-success" href="/">FunShop</a>
+                <button class="navbar-toggler  text-light bg-success my-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon   "></span>
+                </button>
+                <div class="collapse navbar-collapse  " id="navbarSupportedContent">
+
+                    <form class=" mx-auto" method="get" asp-action="Index">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control " type="search" name="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-success" type="submit">Search</button>
+                        </div>
+                    </form>
+
+                    <ul class="navbar-nav ">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/cart/ShowCart" data-bs-toggle="tooltip" data-bs-placement="bottom" title="cart" >
+                                <i class="fas fa-shopping-cart  text-success fx-1"></i>
+                            </a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-area="Identity" asp-page="/Account/logout" data-bs-toggle="tooltip" data-bs-placement="bottom" title="logout">
+                                    <i class="fas fa-sign-out-alt text-success fx-1"></i>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-area="Identity" asp-page="/Account/Login" data-bs-toggle="tooltip" data-bs-placement="bottom" title="login">
+                                    <i class="fas fa-user text-success fx-1"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-area="Identity" asp-page="/Account/Register" data-bs-toggle="tooltip" data-bs-placement="bottom" title="register">
+                                    <i class="fas fa-sign-in-alt text-success fx-1"></i>
+
+                                </a>
+                                </li>
+                                }
+
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                <li class="nav-item">
+                                    <a class="nav-link active" asp-action="Index" asp-controller="Admin" data-bs-toggle="tooltip" data-bs-placement="bottom" title="dashboard">
+                                        <i class="fas fa-tachometer-alt  text-success fx-1"></i>
+                                    </a>
+                                </li>
+                            }
+                            </ul>
+
+                </div>
+            </div>
+        </nav>
+
+        <main role="main">
+            @RenderBody()
+        </main>
+
+        <footer>
+            <div class="p-5 mt-auto bg-light">
+                <div class="container">
+                    <div class="row">
+
+
+                        <div class="col-md-4">
+                            <h6>first columns</h6>
+                            <hr class="bg-dark mb-2 mt-0 d-inline-block mx-auto w-75">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="#">Active</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-4">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="#">Active</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-4">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="#">Active</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+                crossorigin="anonymous"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

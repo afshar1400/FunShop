@@ -1,0 +1,64 @@
+﻿@model ProductVMPaging
+@{
+    ViewData["Title"] = "product page";
+    string subDesc = "";
+}
+
+<div class="container d-flex justify-content-center align-items-center banner bg-success text-white h-100">
+    <div class="text-center ">
+
+        <h2 class="text-light">FunShop</h2>
+        <p>have fun shopping with us.</p>
+        <a class="btn btn-outline-light" href="#">see more</a>
+    </div>
+    <img src="~/images/dina.png" />
+</div>
+
+<div class="container mt-3">
+    <div class="row">
+        @foreach (var item in Model.Products)
+        {
+            int strlen = item.Description.Length > 100 ? 100 : item.Description.Length;
+            subDesc = item.Description.Substring(0, strlen);
+            <div class="col-md-4 col-lg-3 col-xl-3">
+                <div class="card ">
+                    <a asp-action="GetProductById" asp-route-id="@item.Id" target="_blank">
+                        <img src="~/images/@item.ImageName" style="height: 150px;" class="card-img-top" alt="@item.Name">
+                    </a>
+                    <div class="card-body bg-light">
+                        <a asp-action="GetProductById" asp-route-id="@item.Id" class="btn btn-light fs-3">@item.Name</a>
+                        <p class="text-dark ">
+                            @subDesc 
+                            <span class="badge rounded-pill bg-danger">@item.Price</span> 
+                        </p>
+                        <a class="btn btn-success d-block"  asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.Id">add to cart</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mx-auto p-1 my-5">
+        <nav aria-label="Page navigation example" >
+            <ul class="pagination justify-content-center">
+            @if (Model.Paging.HasPrev)
+            {
+
+                <li class="page-item"><a class="page-link text-dark" href="/Home/Index?index=@(Model.Paging.PageIndex-1) &Size=@Model.Paging.PageSize &search=@Model.Paging.Search">previous</a></li>
+            }
+
+            @for (int i = 1; i < Model.Paging.NumberOfPages+1; i++)
+            {
+                <li class="page-item " ><a class="page-link text-dark @(@Model.Paging.PageIndex==i ? "bg-success text-white" : " ")" href="/Home/Index?index=@i&Size=@Model.Paging.PageSize &search=@Model.Paging.Search">@i</a></li>
+
+            }
+                
+            @if (Model.Paging.HasNext)
+            {
+
+            <li class="page-item"><a class="page-link text-dark" href="/Home/Index?index=@(Model.Paging.PageIndex+1) &Size=@Model.Paging.PageSize &search=@Model.Paging.Search">next</a></li>
+            }
+            </ul>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+﻿@model FunShop.Core.services.OrderVM
+
+<div class="container my-3 p-3">
+
+
+    <div class="row">
+        <div class="col-md-4 mx-auto">
+            <form asp-action="Index" method="post" asp-controller="Order">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Province" class="control-label"></label>
+                    <input asp-for="Province" class="form-control" />
+                    <span asp-validation-for="Province" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="city" class="control-label"></label>
+                    <input asp-for="city" class="form-control" />
+                    <span asp-validation-for="city" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PostCode" class="control-label"></label>
+                    <input asp-for="PostCode" class="form-control" />
+                    <span asp-validation-for="PostCode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="submit" value="go bank" class="btn btn-success btn-block w-100" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

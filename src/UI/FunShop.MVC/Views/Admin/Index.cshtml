@@ -1,0 +1,475 @@
+﻿
+<script src="https://unpkg.com/vue@3"></script>
+<script src="https://unpkg.com/vue-router@4"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div id="app">
+    <div class="container-fluid ">
+
+        <div class="row">
+
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse vh-100">
+
+                <div class="position-sticky ">
+
+                    <ul class="nav flex-column mt-3">
+
+                        <li class="nav-item">
+                            <router-link to="/" class="nav-link active text-success">
+                                dashboard
+                            </router-link>
+                        </li>
+
+                        <li class="nav-item">
+                            <router-link to="/order" class="nav-link  text-success ">
+
+                                Order
+                            </router-link>
+                        </li>
+
+                        <li class="nav-item">
+                            <router-link to="/category" class="nav-link  text-success">
+
+                                category
+                            </router-link>
+                        </li>
+
+                        <li class="nav-item">
+                            <router-link to="/product" class="nav-link  text-success">
+
+                                Products
+                            </router-link>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </nav>
+
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- route outlet -->
+                <!-- component matched by the route will render here -->
+                <router-view></router-view>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+            const app = Vue.createApp({})
+
+            const CategoryComp = {
+                template: `
+
+                        <div class="container">
+                                <div class="d-flex justify-content-between my-2">
+                                    <h3>categories</h3>
+                                    <button class="btn btn-success" @@click="ToggleForm" >add new category</button>
+                                </div>
+
+                                <div class="my-3" v-if="showForm">
+
+                                    <div class="mb-2">
+                                    <input type="number" v-model="id" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control" v-model="name" placeholder="description for category">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
+                                        <textarea class="form-control" v-model="Description" rows="2" ></textarea>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <button class="btn btn-block btn-info" type="button" @@click="SubmitForm" >submit</button>
+                                    </div>
+
+                                </div>
+
+                                <div  class="row " >
+                                        <div v-for="cat in categories" :key="cat.id" class="col-md-4 col-lg-3 col-xl-2 position-relative">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h3 class="card-title">{{cat.name}}</h3>
+                                                    <p class="card-text">{{cat.description}}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class=" position-absolute " style=" top:0;right:0;z-index:2 ">
+                                                <div class="d-flex flex-column">
+                                                    <button class=" btn btn-danger " @@click="DeleteCat(cat.id)"><i class="fas fa-trash"></i></button>
+                                                    <button class=" btn btn-success " @@click="UpdateCat(cat.id)" ><i class="fas fa-pen-alt "></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                            </div>
+                        `,
+                mounted() {
+                    this.GetAllCategory();
+                },
+                data() {
+                    return {
+                        showForm: false,
+                        isUpdate: false,
+                        id: 0,
+                        name: null,
+                        Description:null,
+                        categories: [],
+                    }
+                },
+                methods: {
+                   async SubmitForm() {
+                        var newCat = { Name: this.name, Description: this.Description };
+
+                        if (this.isUpdate) {
+                            newCat.id = this.id;
+                          await  axios.post("/admin/UpdateCategory", newCat)
+                        } else {
+                           await axios.post("/admin/AddCategory", newCat);
+
+                        }
+                        this.resetFields();
+                        this.GetAllCategory();
+                    },
+                   async GetAllCategory() {
+                       var cats = await axios.get("/admin/GetAllCategory");
+                        this.categories = cats.data;
+                    },
+                  async DeleteCat(id) {
+                      await  axios.delete("/admin/DeleteCategory/" + id);
+                      this.GetAllCategory();
+
+                    },
+                    UpdateCat(id) {
+                        this.isUpdate = true;
+                        this.showForm = true;
+                        var cat = this.categories.filter(c => c.id == id)[0];
+                        this.id = cat.id;
+                        this.name = cat.name;
+                        this.Description = cat.description;
+
+                    },
+                    ToggleForm() {
+                        this.showForm = !this.showForm;
+                    },
+                    resetFields() {
+                        this.name = "";
+                        this.Description = "";
+                        this.id = 0;
+                    }
+                },
+
+            }
+
+            const ProductComponent= {
+                template: `
+
+                    <div class="container ">
+
+                            <div class="d-flex justify-content-between my-2">
+                                <h3>Product</h3>
+                                <button class="btn btn-success" @@click="ToggleForm" >add new Product</button>
+                            </div>
+
+                            <div class="my-3" v-if="showForm">
+
+                                <div class="mb-2">
+                                <input type="number" v-model="id" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" v-model="name" placeholder="name of product">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Price</label>
+                                    <input type="number" class="form-control" v-model="price" placeholder="Price of product">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">InStock</label>
+                                    <input type="number" class="form-control" v-model="InStock" placeholder="Stock of product">
+                                </div>
+
+                                <div class="mb-3">
+                                    <select class="form-select" v-model="CategoryId" aria-label="category seke">
+                                        <option selected>Open this select menu</option>
+                                        <option v-for="cat in categories" :key="cat.id" v-bind:value="cat.id" >{{cat.name}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label  class="form-label">product image</label>
+                                    <input class="form-control" type="file" ref="ProductImage" name="ProductImage" @@change="handleFileUpload">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label  class="form-label">product description</label>
+                                    <textarea class="form-control" v-model="description" rows="2" ></textarea>
+                                </div>
+
+                                <div class="mb-2">
+                                    <button class="btn btn-block btn-info" type="button" @@click="SubmitForm" >submit</button>
+                                </div>
+
+                            </div>
+
+                            <div class="row ">
+                                <div v-for="pro in products" :key="pro.id" class="col-md-4 col-lg-3 col-xl-2 position-relative"  >
+
+                                    <div class="card">
+                                      <img v-bind:src="'/images/'+pro.imageName" class="card-img-top" />
+                                        <div class="card-body">
+
+                                            <h3 class="card-title">{{pro.name}}</h3>
+                                            <p class="card-subtitle">{{pro.description}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class=" position-absolute " style=" top:0;left:0;z-index:2 ">
+                                        <div class="d-flex flex-column">
+                                                <button class=" btn btn-danger " @@click="DeleteProduct(pro.id)"><i class="fas fa-trash "></i></button>
+                                                <button class=" btn btn-success " @@click="UpdateProduct(pro.id)" ><i class="fas fa-pen-alt "></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                      </div>
+                `,
+               async mounted(){
+                   await this.GetAllProducts();
+                   await this.GetAllCategories();
+                },
+                data() {
+                    return {
+                        showForm: false,
+                        isUpdate: false,
+                        id: 0,
+                        name: null,
+                        price:null,
+                        Image:null,
+                        InStock:null,
+                        CategoryId:null,
+                        description:null,
+                        categories: [],
+                        products:[],
+                    }
+                },
+                methods: {
+
+                    handleFileUpload() {
+                        this.Image = this.$refs.ProductImage.files[0];
+                        },
+                    async SubmitForm() {
+
+                        var form = new FormData();
+                        form.append("Name", this.name);
+                        form.append("Description", this.description);
+                        form.append("InStock", this.InStock);
+                        form.append("Price", this.price);
+                        form.append("CategoryId", this.CategoryId);
+                        form.append("Image", this.Image);
+
+                        if (this.isUpdate) {
+                            form.append("Id",this.id)
+                            await axios.post("/admin/UpdateProduct", form, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            })
+                        }
+                        else {
+                        await axios.post("/admin/AddProduct", form, {
+                            //headers: {
+                            //    'Content-Type': 'multipart/form-data'
+                            //}
+                        })
+                        }
+                        this.resetFields();
+                        await this.GetAllProducts();
+                    },
+                    async GetAllProducts() {
+                        var prs = await axios.get("/admin/GetAllProduct");
+                        this.products = prs.data;
+                    },
+                    async GetAllCategories() {
+                        var cats = await axios.get("/admin/GetAllCategory");
+                        console.log(cats)
+                        this.categories = cats.data;
+                    },
+                    async DeleteProduct(id) {
+                        await  axios.delete("/admin/DeleteProduct/" + id);
+                        await this.GetAllProduct();
+                    },
+                    UpdateProduct(id) {
+                        this.isUpdate = true;
+                        this.showForm = true;
+                        var pr = this.products.filter(c => c.id == id)[0];
+                        this.id = pr.id;
+                        this.name = pr.name;
+                        this.description = pr.description;
+                        this.price=pr.price;
+                        this.InStock=pr.InStock;
+                        this.categoryId=this.CategoryId;
+                    },
+                    ToggleForm() {
+                        this.showForm = !this.showForm;
+                    },
+                    resetFields() {
+                        this.name = "";
+                        this.description = "";
+                        this.price = 0;
+                        this.InStock = 0;
+                        this.CategoryId = 0;
+                        this.id = 0;
+                    }
+                },
+
+            }
+
+            const OrderComponent = {
+                template:`
+                <div class="container">
+                    <div class="d-flex justify-content-between my-2">
+                        <h3>Orders</h3>
+                    </div>
+
+                    <div class="my-3">
+                        <div class="modal fade modal-dialog " id="modalform" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h2>porder Id:{{order.id}}  ======== isSent:{{order.isSend}}</h2>
+                                        <p>{{order.province}}---{{order.city}}----{{order.postCode}}</p>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">product id</th>
+                                                    <th scope="col">product name</th>
+                                                    <th scope="col">product qty</th>
+                                                    <th scope="col">product price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="item in orderItems" :key="item.id">
+                                                    <th scope="row">{{item.id}}</th>
+                                                    <td>{{item.name}}</td>
+                                                    <td>{{item.qty}}</td>
+                                                    <td>{{item.price}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Understood</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Country</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">BankInfo</th>
+                                <th scope="col">Edit</th>
+                                <th scope="col">more</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(order,index) in orders" :key="order.id" :class="{ 'table-danger': !order.isSend }">
+                                <th scope="col">{{index}}</th>
+                                <th scope="col">{{order.name}}</th>
+                                <th scope="col">{{order.province}}</th>
+                                <th scope="col">{{order.totol}}</th>
+                                <th scope="col">{{order.bankInfo}}</th>
+                                <th scope="col">
+                                    <button class=" btn btn-info " @@click="SendOrder(order.id)">sent</button>
+                                </th>
+                                <th scope="col">
+                                    <button class="btn btn-info" @@click="loadOrderItem(order.id)" data-bs-toggle="modal" data-bs-target="#modalform">modal</button>
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <nav aria-label="Page navigation example">
+                      <ul class="pagination">
+                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                     </ul>
+                   </nav>
+                </div>`,
+               async mounted() {
+                   await this.GetAllOrders();
+                },
+                data() {
+                    return {
+                        order:[],
+                        orders: [],
+                        orderItems:[],
+                    }
+                },
+                methods: {
+   
+                    async GetAllOrders() {
+                        var res = await axios.get("/order/GetAllOrders");
+                        console.log(res);
+                        this.orders = res.data;
+                    },
+                    async SendOrder(id) {
+                        var orderSend=this.orders.filter(s =>s.id==id)[0].isSend;
+                        if(orderSend ==true)
+                           return;
+                        var res = await axios.get("/order/SendOrder/" + id);
+                        await this.GetAllOrders();
+                    },
+                    async loadOrderItem(id) {
+                        var res = await axios.get("/order/loadOrderItems/" + id);
+                        this.order=this.orders.filter(s =>s.id==id)[0];
+                        console.log(res);
+                        this.orderItems = res.data;
+                    },
+                 
+                },
+            }
+            const Home = { template: '<h2>DashBoard</h2>' }
+
+            const routes = [
+                { path: '/', component: Home },
+                { path: '/category', component: CategoryComp },
+                { path: '/product', component: ProductComponent },
+                { path: '/order', component: OrderComponent },
+            ]
+
+            const router = VueRouter.createRouter({
+                history: VueRouter.createWebHashHistory(),
+                routes,
+            })
+
+            app.use(router).mount('#app')
+</script>
